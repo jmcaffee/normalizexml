@@ -10,6 +10,9 @@
 require 'ktcommon/ktpath'
 require 'ktcommon/ktcmdline'
 
+require 'nokogiri'
+
+
 ##############################################################################
 # Everything is contained in Module	NormalizeXml
 module NormalizeXml
@@ -41,22 +44,30 @@ module NormalizeXml
 			
 			raise ArgumentError.new("infile not provided") unless !@infile.nil? && !@infile.empty?
 			if( @outfile.nil? || @outfile.empty? )
-				@outfile = @infile + ".nml"
+				@outfile = File.dirname(@infile) + File.basename(@infile, ".xml") + ".nml.xml"
 			end
 			
 			# Open the file and parse each line...
-			File.open(infile, "r") do |f|
-				File.open(outfile, "w") do |fout|
+			File.open(@infile, "r") do |f|
+				File.open(@outfile, "w") do |fout|
 					f.each do |lineIn|
 						fout << parseLine(lineIn)
 					end
 				end
 			end
 			
+			f = File.open(@outfile, 'r')
+			doc = Nokogiri::XML(f)
+			f.close
+			
+			f = File.open(@outfile, 'w')
+			doc.write_xml_to(f)
+			f.close
+			
 			puts "Normalization complete."
 			puts
-			puts "Input file:  #{infile}"
-			puts "Output file: #{outfile}"
+			puts "Input file:  #{@infile}"
+			puts "Output file: #{@outfile}"
 			puts
 		end
 		  

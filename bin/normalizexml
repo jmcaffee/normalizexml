@@ -1,3 +1,4 @@
+#! C:/tools/Ruby/bin/ruby.exe
 ##############################################################################
 # File:: normalizexml.rb
 # Purpose:: Utility to ...
@@ -23,14 +24,15 @@ class NormalizeXmlApp < UserChoices::Command
     
     def add_sources(builder)
         builder.add_source(CommandLineSource, :usage,
-                            "Usage: #{$0} [options] CMDLINE_ARG",
-                            "Application description",
-                            "CMDLINE_ARG restrictions/description.")
+                            "Usage: #{$0} [options] INPUT_XML {OUTPUT_FILE}",
+                            "Normalize an XML file",
+                            "INPUT_XML   - file to normalize",
+														"OUTPUT_FILE - (optional) filename of output file\n")
     end # def add_sources
     
     
     def add_choices(builder)
-        # Arguments
+				# Arguments
         #builder.add_choice(:cmdArg, :length=>1) { |command_line|   # Use length to REQUIRE args.
         builder.add_choice(:cmdArg) { |command_line|
             command_line.uses_arglist
@@ -41,7 +43,8 @@ class NormalizeXmlApp < UserChoices::Command
             command_line.uses_switch("-v", "--verbose",
                                     "Verbose output.")
         }
-        
+
+=begin
         builder.add_choice(:aswitch, :type=>:boolean, :default=>false) { |command_line|
             command_line.uses_switch("-a", "--aswitch",
                                     "Switch description.")
@@ -52,6 +55,7 @@ class NormalizeXmlApp < UserChoices::Command
             command_line.uses_option("-o", "--option ARG",
                                     "Option description.")
         }
+=end        
         
     end # def add_choices
     
@@ -68,31 +72,36 @@ class NormalizeXmlApp < UserChoices::Command
     def execute
       $LOG.debug "NormalizeXmlApp::execute"
 
-      if(@user_choices[:verbose])
+			if(@user_choices[:verbose])
         @controller.verbose(@user_choices[:verbose])
       end
       
+=begin
       if(@user_choices[:aswitch])
         @controller.doSomethingWithSwitch(@user_choices[:aswitch])
         return
       end
-      
+=end      
       if(@user_choices[:cmdArg].empty?) # If no cmd line arg...
-        return unless @controller.noCmdLineArg()
-	  else
-		return unless @controller.doSomethingWithCmdLineArg(@user_choices[:cmdArg])
-	  end
-      
-		@controller.infile 	= @user_choices[:infile] unless @user_choices[:infile].nil? || @user_choices[:infile].empty?
-		@controller.outfile = @user_choices[:outfile] unless @user_choices[:outfile].nil? || @user_choices[:outfile].empty?
-      @controller.normalize()
-    end # def execute
+        #return unless @controller.noCmdLineArg()
+        @controller.noCmdLineArg()
+			else
+				#return unless @controller.doSomethingWithCmdLineArg(@user_choices[:cmdArg])
+				@controller.doSomethingWithCmdLineArg(@user_choices[:cmdArg])
+			end
+				
+			@controller.infile 	= @user_choices[:infile] unless @user_choices[:infile].nil? || @user_choices[:infile].empty?
+			@controller.outfile = @user_choices[:outfile] unless @user_choices[:outfile].nil? || @user_choices[:outfile].empty?
+			@controller.normalize()
+		end # def execute
         
     
 end # class NormalizeXmlApp
 
 
-if $0 == __FILE__
+# Uncomment the next line if this file can be both loaded via 'require' AND called from the command line.
+# This technique does NOT work if the app is running as a gem.
+#if $0 == __FILE__
 	begin
 		NormalizeXmlApp.new.execute
 	rescue SystemExit
@@ -108,4 +117,4 @@ if $0 == __FILE__
 		puts e.backtrace
 		puts
 	end	
-end    
+#end    
