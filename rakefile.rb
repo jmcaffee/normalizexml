@@ -8,11 +8,12 @@
 ######################################################################################
 
 require 'rubygems'
-require 'rake/gempackagetask'
+require 'psych'
+gem 'rdoc', '>= 3.9.4'
 
 require 'rake'
 require 'rake/clean'
-require 'rake/rdoctask'
+require 'rdoc/task'
 require 'ostruct'
 require 'rakeUtils'
 
@@ -68,74 +69,25 @@ end
 
 
 #############################################################################
-desc "Documentation for building gem and executable"
-task :help do
-	hr = "-"*79
-	puts hr
-	puts "Building and installing the Gem"
-	puts "==============================="
-	puts
-	puts "Use the following command line to build and install the gem:"
-	puts 
-	puts "rake clean gem && gem install pkg\\normalizexml-#{PKG_VERSION}.gem -l --no-ri --no-rdoc"
-	puts
-	puts "Alternately, run the buildgem.cmd script."
-	puts
-	puts hr
-end
-
-
-#############################################################################
-desc "Generate a simple script to build and install this gem"
-task :build_gem_script do
-	scriptname = "buildgem.cmd"
-	if(File.exists?(scriptname))
-		puts "Removing existing script."
-		rm scriptname
-	end
-	
-	File.open(scriptname, 'w') do |f|
-		f << "::\n"
-		f << ":: #{scriptname}\n"
-		f << "::\n"
-		f << ":: Running this script will generate and install the #{PROJNAME} gem.\n"
-		f << ":: Run 'rake build_gem_script' to regenerate this script.\n"
-		f << "::\n"
-
-		f << "rake clean gem && gem install pkg\\normalizexml-#{PKG_VERSION}.gem -l --no-ri --no-rdoc\n"
-	end
-end
-
-
-#############################################################################
-Rake::RDocTask.new do |rdoc|
+RDoc::Task.new(:rdoc) do |rdoc|
     files = ['docs/**/*.rdoc', 'lib/**/*.rb', 'app/**/*.rb']
     rdoc.rdoc_files.add( files )
     rdoc.main = "docs/README.rdoc"           	# Page to start on
 	#puts "PWD: #{FileUtils.pwd}"
     rdoc.title = "#{PROJNAME} Documentation"
     rdoc.rdoc_dir = 'doc'                   # rdoc output folder
-    rdoc.options << '--line-numbers' << '--inline-source' << '--all'
+    rdoc.options << '--line-numbers' << '--all'
 end
 
 
 #############################################################################
-desc "List files to be included in gem"
-task :pkg_list do
-	puts "PKG_FILES (will be included in gem):"
-	PKG_FILES.each do |f|
-		puts "  #{f}"
-	end
-end
-
-
-#############################################################################
-spec = Gem::Specification.new do |s|
+SPEC = Gem::Specification.new do |s|
 	s.platform = Gem::Platform::RUBY
 	s.summary = "Utility for normalizing .xml files"
 	s.name = PROJNAME.downcase
 	s.version = PKG_VERSION
 	s.requirements << 'none'
+	s.bindir = 'bin'
 	s.require_path = 'lib'
 	#s.autorequire = 'rake'
 	s.files = PKG_FILES
@@ -146,15 +98,6 @@ spec = Gem::Specification.new do |s|
 	s.description = <<EOF
 NormalizeXml is a utility for normalizing .xml files
 EOF
-end
-
-
-#############################################################################
-Rake::GemPackageTask.new(spec) do |pkg|
-	pkg.need_zip = true
-	pkg.need_tar = true
-	
-	puts "PKG_VERSION: #{PKG_VERSION}"
 end
 
 
