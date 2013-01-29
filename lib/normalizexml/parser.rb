@@ -58,6 +58,7 @@ module NormalizeXml
 			normalize_ids(doc)
 			normalize_orders(doc)
 			normalize_ppm_datatypes(doc)
+		  normalize_derivedparameters(doc)
 			
 			f = File.open(@outfile, 'w')
 			doc.write_xml_to(f)
@@ -82,6 +83,12 @@ module NormalizeXml
 			
 			# Normalize all rule Ids
 			rules = doc.xpath('//Rule')
+			rules.each do |r|
+				r['Id'] = "0"
+			end
+			
+			# Normalize all DPM Ids
+			rules = doc.xpath('//DPM')
 			rules.each do |r|
 				r['Id'] = "0"
 			end
@@ -120,6 +127,37 @@ module NormalizeXml
 				n.remove_attribute('DataType')
 			end
 			
+		end
+		
+		
+		###
+		# Normalize all DERIVEDPARAMETERS children by sorting them
+    # alphabetically by Name.
+		# doc:: Nokogiri::XML document
+		#
+    # To get this to work, the following flow was used:
+    #   1. Create a sorted array of all child nodes.
+    #   2. Create a new node and add each node from the array (giving us sorted order).
+    #   3. Delete (unlink) each of the sorted child nodes from the original node.
+    #   4. Add the new node as a sibling to the originial node.
+    #   5. Delete (unlink) the original node
+    #   6. Rename the new node to the same name as the deleted node.
+		def normalize_derivedparameters(doc)
+			node = doc.xpath('//DERIVEDPARAMETERS')
+
+			sorted = node.children.sort_by do |n1| 
+        n1['Name']
+      end
+      node.children.each { |n| n.unlink }
+
+      newnode = doc.create_element "SortedDPMs"
+      sorted.each do |n| 
+        newnode << n;
+      end
+
+	    doc.at('DERIVEDPARAMETERS').add_next_sibling( newnode )
+      node.unlink
+      newnode.name = 'DERIVEDPARAMETERS'
 		end
 		
 		
