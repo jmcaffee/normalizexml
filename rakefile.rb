@@ -35,11 +35,14 @@ PKG_FILES   = Dir["**/*"].select { |d| d =~ %r{^(README|bin/|data/|ext/|lib/|spe
 
 # Setup common clean and clobber targets
 
-CLEAN.include("pkg")
-CLOBBER.include("pkg")
+CLEAN.include("pkg/**/*.*")
+CLEAN.include("tmp/**/*.*")
 CLEAN.include("#{BUILDDIR}/**/*.*")
-CLOBBER.include("#{BUILDDIR}")
 CLEAN.include("#{DISTDIR}/**/*.*")
+
+CLOBBER.include("pkg")
+CLOBBER.include("tmp")
+CLOBBER.include("#{BUILDDIR}")
 CLOBBER.include("#{DISTDIR}/**/*.*")
 
 
