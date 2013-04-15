@@ -2,3 +2,4 @@
 /buildgem
 /buildgem.cmd
 pkg/
+tmp/

@@ -1,7 +1,7 @@
 ##############################################################################
-# File:: 	parser.rb
+# File::  parser.rb
 # Purpose:: Model object for NormalizeXml.
-# 
+#
 # Author::    Jeff McAffee 09/03/2010
 # Copyright:: Copyright (c) 2010, kTech Systems LLC. All rights reserved.
 # Website::   http://ktechsystems.com
@@ -14,127 +14,128 @@ require 'nokogiri'
 
 
 ##############################################################################
-# Everything is contained in Module	NormalizeXml
+# Everything is contained in Module NormalizeXml
 module NormalizeXml
-	  
-	class Parser
 
-	attr_accessor	:infile
-	attr_accessor	:outfile
-	attr_reader 	:verbose
-		
-		def initialize()
-			$LOG.debug "Parser::initialize"
-			
-			@infile 	= nil
-			@outfile	= nil
-			@verbose	= false
-			
-		end
-	  
+  class Parser
 
-		def verbose=(arg)
-			$LOG.debug "Parser::verbose=( #{arg} )"
-			@verbose = arg
-		end
-		  
-	  
-		def normalize()
-			$LOG.debug "Parser::normalize"
-			
-			raise ArgumentError.new("infile not provided") unless !@infile.nil? && !@infile.empty?
-			if( @outfile.nil? || @outfile.empty? )
-				newfilename = File.basename(@infile, ".xml") + ".nml.xml"
-				@outfile = File.join( File.absolute_path( File.dirname(@infile) ), newfilename )
-			end
-			
-			puts "Normalizing file: #{@infile}"
-			puts
-			
-			f = File.open(@infile, 'r')
-			doc = Nokogiri::XML(f)
-			f.close
-			
-			normalize_ids(doc)
-			normalize_orders(doc)
-			normalize_ppm_datatypes(doc)
-		  normalize_derivedparameters(doc)
-			
-			f = File.open(@outfile, 'w')
-			doc.write_xml_to(f)
-			f.close
-			
-			puts "Normalization of #{@infile} complete."
-			puts "Output file: #{@outfile}"
-			puts
-		end
-		  
-	  
-		###
-		# Normalize Id attributes to 0
-		# doc:: Nokogiri::XML document
-		#
-		def normalize_ids(doc)
-			# Normalize all ruleset Ids
-			rulesets = doc.xpath('//Ruleset')
-			rulesets.each do |rs|
-				rs['Id'] = "0"
-			end
-			
-			# Normalize all rule Ids
-			rules = doc.xpath('//Rule')
-			rules.each do |r|
-				r['Id'] = "0"
-			end
-			
-			# Normalize all DPM Ids
-			rules = doc.xpath('//DPM')
-			rules.each do |r|
-				r['Id'] = "0"
-			end
-			
-		end
-		
-		
-		###
-		# Normalize Order attributes to 0
-		# doc:: Nokogiri::XML document
-		#
-		def normalize_orders(doc)
-			# Normalize all Compute Order attributes by removing them
-			nodes = doc.xpath('//Compute')
-			nodes.each do |n|
-				n.remove_attribute('Order')
-			end
-			
-			# Normalize all AssignTo Order attributes by removing them
-			nodes = doc.xpath('//AssignTo')
-			nodes.each do |n|
-				n.remove_attribute('Order')
-			end
-			
-		end
-		
-		
-		###
-		# Normalize PPM DataType attributes by removing them
-		# doc:: Nokogiri::XML document
-		#
-		def normalize_ppm_datatypes(doc)
-			# Normalize all PPM DataType attributes by removing them
-			nodes = doc.xpath('//PPM')
-			nodes.each do |n|
-				n.remove_attribute('DataType')
-			end
-			
-		end
-		
-		
-		###
-		# Normalize all DERIVEDPARAMETERS children by sorting them
+  attr_accessor :infile
+  attr_accessor :outfile
+  attr_reader   :verbose
+
+    def initialize()
+      $LOG.debug "Parser::initialize"
+
+      @infile   = nil
+      @outfile  = nil
+      @verbose  = false
+
+    end
+
+
+    def verbose=(arg)
+      $LOG.debug "Parser::verbose=( #{arg} )"
+      @verbose = arg
+    end
+
+
+    def normalize()
+      $LOG.debug "Parser::normalize"
+
+      raise ArgumentError.new("infile not provided") unless !@infile.nil? && !@infile.empty?
+      if( @outfile.nil? || @outfile.empty? )
+        newfilename = File.basename(@infile, ".xml") + ".nml.xml"
+        @outfile = File.join( File.absolute_path( File.dirname(@infile) ), newfilename )
+      end
+
+      puts "Normalizing file: #{@infile}\n\n" if @verbose
+
+      f = File.open(@infile, 'r')
+      doc = Nokogiri::XML(f)
+      f.close
+
+      normalize_ids(doc)
+      normalize_orders(doc)
+      normalize_ppm_datatypes(doc)
+      normalize_derivedparameters(doc)
+
+      f = File.open(@outfile, 'w')
+      doc.write_xml_to(f)
+      f.close
+
+      if @verbose
+        puts "Normalization of #{@infile} complete."
+        puts "Output file: #{@outfile}"
+        puts
+      end
+    end
+
+
+    ###
+    # Normalize Id attributes to 0
+    # doc:: Nokogiri::XML document
+    #
+    def normalize_ids(doc)
+      # Normalize all ruleset Ids
+      rulesets = doc.xpath('//Ruleset')
+      rulesets.each do |rs|
+        rs['Id'] = "0"
+      end
+
+      # Normalize all rule Ids
+      rules = doc.xpath('//Rule')
+      rules.each do |r|
+        r['Id'] = "0"
+      end
+
+      # Normalize all DPM Ids
+      rules = doc.xpath('//DPM')
+      rules.each do |r|
+        r['Id'] = "0"
+      end
+
+    end
+
+
+    ###
+    # Normalize Order attributes to 0
+    # doc:: Nokogiri::XML document
+    #
+    def normalize_orders(doc)
+      # Normalize all Compute Order attributes by removing them
+      nodes = doc.xpath('//Compute')
+      nodes.each do |n|
+        n.remove_attribute('Order')
+      end
+
+      # Normalize all AssignTo Order attributes by removing them
+      nodes = doc.xpath('//AssignTo')
+      nodes.each do |n|
+        n.remove_attribute('Order')
+      end
+
+    end
+
+
+    ###
+    # Normalize PPM DataType attributes by removing them
+    # doc:: Nokogiri::XML document
+    #
+    def normalize_ppm_datatypes(doc)
+      # Normalize all PPM DataType attributes by removing them
+      nodes = doc.xpath('//PPM')
+      nodes.each do |n|
+        n.remove_attribute('DataType')
+      end
+
+    end
+
+
+    ###
+    # Normalize all DERIVEDPARAMETERS children by sorting them
     # alphabetically by Name.
-		# doc:: Nokogiri::XML document
-		#
+    # doc:: Nokogiri::XML document
+    #
     # To get this to work, the following flow was used:
     #   1. Create a sorted array of all child nodes.
     #   2. Create a new node and add each node from the array (giving us sorted order).
@@ -142,51 +143,51 @@ module NormalizeXml
     #   4. Add the new node as a sibling to the originial node.
     #   5. Delete (unlink) the original node
     #   6. Rename the new node to the same name as the deleted node.
-		def normalize_derivedparameters(doc)
-			node = doc.xpath('//DERIVEDPARAMETERS')
+    def normalize_derivedparameters(doc)
+      node = doc.xpath('//DERIVEDPARAMETERS')
 
-			sorted = node.children.sort_by do |n1| 
+      sorted = node.children.sort_by do |n1|
         n1['Name']
       end
       node.children.each { |n| n.unlink }
 
       newnode = doc.create_element "SortedDPMs"
-      sorted.each do |n| 
+      sorted.each do |n|
         newnode << n;
       end
 
-	    doc.at('DERIVEDPARAMETERS').add_next_sibling( newnode )
+      doc.at('DERIVEDPARAMETERS').add_next_sibling( newnode )
       node.unlink
       newnode.name = 'DERIVEDPARAMETERS'
-		end
-		
-		
-		###
-		# DEPRECATED - DO NOT USE
-		def parseLine(ln)
-			out = ln.gsub( /Order=\"(\d+)\"/, 'Order="0"')
-			out = out.gsub( /Order= '(\d+)'/, 'Order="0"')
-			out = out.gsub( /  Order=\"0\"/, ' Order="0"')
-			out = out.gsub( /  Order=\"0\"/, ' Order="0"')
-			out = out.gsub( /Order=\"0\">/, 'Order="0" >')
-			out = out.gsub( /Id=\"(\d+)\"/, 'Id="0"')
-			
-		end
-		
-		
-		def testTrue()
-			$LOG.debug "Parser::testTrue"
-			true
-		end
-		  
-	  
-		def testFalse()
-			$LOG.debug "Parser::testFalse"
-			false
-		end
-		  
-	  
-	end # class Parser
+    end
+
+
+    ###
+    # DEPRECATED - DO NOT USE
+    def parseLine(ln)
+      out = ln.gsub( /Order=\"(\d+)\"/, 'Order="0"')
+      out = out.gsub( /Order= '(\d+)'/, 'Order="0"')
+      out = out.gsub( /  Order=\"0\"/, ' Order="0"')
+      out = out.gsub( /  Order=\"0\"/, ' Order="0"')
+      out = out.gsub( /Order=\"0\">/, 'Order="0" >')
+      out = out.gsub( /Id=\"(\d+)\"/, 'Id="0"')
+
+    end
+
+
+    def testTrue()
+      $LOG.debug "Parser::testTrue"
+      true
+    end
+
+
+    def testFalse()
+      $LOG.debug "Parser::testFalse"
+      false
+    end
+
+
+  end # class Parser
 
 
 
