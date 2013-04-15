@@ -52,7 +52,7 @@ directory PKGDIR
 #############################################################################
 #### Imports
 # Note: Rake loads imports only after the current rakefile has been completely loaded.
-
+=begin
 # Load local tasks.
 imports = FileList['tasks/**/*.rake']
 imports.each do |imp|
@@ -60,75 +60,11 @@ imports.each do |imp|
   import "#{imp}"
 end
 
-
+=end
 
 #############################################################################
 #task :init => [BUILDDIR] do
 task :init => [BUILDDIR, DISTDIR, PKGDIR] do
-
-end
-
-
-#############################################################################
-desc "Documentation for building gem"
-task :help do
-  hr = "-"*79
-  puts hr
-  puts "Building the Gem"
-  puts "================"
-  puts
-  puts "Use the following command line to build and install the gem"
-  puts
-  puts "on *nix"
-  puts "rake clean gem && gem install pkg/#{PROJNAME.downcase}-#{PKG_VERSION}.gem -l --no-ri --no-rdoc"
-  puts
-  puts "on *doze"
-  puts "rake clean gem && gem install pkg\\#{PROJNAME.downcase}-#{PKG_VERSION}.gem -l --no-ri --no-rdoc"
-  puts
-  puts "See also the build_gem_script task which will create a script to build and install the gem."
-  puts
-  puts hr
-end
-
-
-#############################################################################
-desc "Generate a simple script to build and install this gem"
-task :build_gem_script do
-  # For windows
-  scriptname = "buildgem.cmd"
-  if(File.exists?(scriptname))
-    puts "Removing existing script."
-    rm scriptname
-  end
-
-  File.open(scriptname, 'w') do |f|
-    f << "::\n"
-    f << ":: #{scriptname}\n"
-    f << "::\n"
-    f << ":: Running this script will generate and install the #{PROJNAME} gem.\n"
-    f << ":: Run 'rake build_gem_script' to regenerate this script.\n"
-    f << "::\n"
-
-    f << "rake clean gem && gem install pkg\\#{PROJNAME.downcase}-#{PKG_VERSION}.gem -l --no-ri --no-rdoc\n"
-  end
-
-  # For nix
-  scriptname = "buildgem"
-  if(File.exists?(scriptname))
-    puts "Removing existing script."
-    rm scriptname
-  end
-
-  File.open(scriptname, 'w') do |f|
-    f << "#\n"
-    f << "# #{scriptname}\n"
-    f << "#\n"
-    f << "# Running this script will generate and install the #{PROJNAME} gem.\n"
-    f << "# Run 'rake build_gem_script' to regenerate this script.\n"
-    f << "#\n"
-
-    f << "rake clean gem && gem install pkg/#{PROJNAME.downcase}-#{PKG_VERSION}.gem -l --no-ri --no-rdoc\n"
-  end
 
 end
 
@@ -156,7 +92,7 @@ end
 
 
 #############################################################################
-SPEC = Gem::Specification.new do |s|
+spec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.summary = "Utility for normalizing .xml files"
   s.name = PROJNAME.downcase
