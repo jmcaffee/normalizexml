@@ -50,19 +50,6 @@ directory PKGDIR
 
 
 #############################################################################
-#### Imports
-# Note: Rake loads imports only after the current rakefile has been completely loaded.
-=begin
-# Load local tasks.
-imports = FileList['tasks/**/*.rake']
-imports.each do |imp|
-  puts "== Importing local task file: #{imp}" if $verbose
-  import "#{imp}"
-end
-
-=end
-
-#############################################################################
 #task :init => [BUILDDIR] do
 task :init => [BUILDDIR, DISTDIR, PKGDIR] do
 
