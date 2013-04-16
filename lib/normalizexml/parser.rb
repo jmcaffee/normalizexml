@@ -57,8 +57,8 @@ module NormalizeXml
       doc = Nokogiri::XML(f)
       f.close
 
-      normalize_ids(doc)
-      normalize_orders(doc)
+      remove_id_attributes(doc)
+      remove_order_attributes(doc)
       normalize_ppm_datatypes(doc)
       normalize_derivedparameters(doc)
 
@@ -82,36 +82,36 @@ module NormalizeXml
 
 
     ###
-    # Normalize Id attributes to 0
+    # Remove Id attributes
     # doc:: Nokogiri::XML document
     #
-    def normalize_ids(doc)
+    def remove_id_attributes(doc)
       # Normalize all ruleset Ids
       rulesets = doc.xpath('//Ruleset')
       rulesets.each do |rs|
-        rs['Id'] = "0"
+        rs.remove_attribute('Id')
       end
 
       # Normalize all rule Ids
       rules = doc.xpath('//Rule')
       rules.each do |r|
-        r['Id'] = "0"
+        r.remove_attribute('Id')
       end
 
-      # Normalize all DPM Ids
+      # Remove all DPM Ids
       rules = doc.xpath('//DPM')
       rules.each do |r|
-        r['Id'] = "0"
+        r.remove_attribute('Id')
       end
 
     end
 
 
     ###
-    # Normalize Order attributes to 0
+    # Remove Order attributes
     # doc:: Nokogiri::XML document
     #
-    def normalize_orders(doc)
+    def remove_order_attributes(doc)
       # Normalize all Compute Order attributes by removing them
       nodes = doc.xpath('//Compute')
       nodes.each do |n|
@@ -120,6 +120,12 @@ module NormalizeXml
 
       # Normalize all AssignTo Order attributes by removing them
       nodes = doc.xpath('//AssignTo')
+      nodes.each do |n|
+        n.remove_attribute('Order')
+      end
+
+      # Normalize all Message Order attributes by removing them
+      nodes = doc.xpath('//Message')
       nodes.each do |n|
         n.remove_attribute('Order')
       end

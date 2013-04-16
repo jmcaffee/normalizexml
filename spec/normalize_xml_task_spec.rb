@@ -32,7 +32,7 @@ describe NormalizeXMLTask do
       lines[0].should include '<?xml version="1.0"?>'
     end
 
-    it "contains GuidelineRoot opening and closeing tags" do
+    it "contains GuidelineRoot opening and closing tags" do
       NormalizeXMLTask.normalize_file(srcxml, outdir)
       lines = file_to_array(outfile)
       #puts "lines[1]: #{lines[1]}"
