@@ -50,7 +50,10 @@ module NormalizeXml
 
       puts "Normalizing file: #{@infile}\n\n" if @verbose
 
-      f = File.open(@infile, 'r')
+      # Find instances of '> <' and replace them with '><'.
+      strip_spaces(@infile, @outfile)
+
+      f = File.open(@outfile, 'r')
       doc = Nokogiri::XML(f)
       f.close
 
@@ -68,6 +71,13 @@ module NormalizeXml
         puts "Output file: #{@outfile}"
         puts
       end
+    end
+
+
+    def strip_spaces(infile, outfile)
+      buffer = IO.read(infile)
+      buffer.gsub!('> <', '><')
+      File.open(outfile, 'w') {|f| f.write buffer }
     end
 
 

@@ -8,6 +8,7 @@
 ##############################################################################
 
 require 'fileutils'
+require 'normalizexml/parser'
 
 class NormalizeXMLTask
   
