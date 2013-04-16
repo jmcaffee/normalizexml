@@ -7,9 +7,11 @@
 # Website::   http://ktechsystems.com
 ##############################################################################
 
-# Clean up the generated script
-CLEAN.include("buildgem.")
-CLEAN.include("buildgem.cmd")
+# Clean up the generated script.
+# NOTE: These were added to the CLOBBER element and not the CLEAN element
+# because the generated script calls 'clean' which would delete itself.
+CLOBBER.include("buildgem.")
+CLOBBER.include("buildgem.cmd")
 
 # These 'aliases' are added directly to the root namespace
 desc "Generate a simple script to build and install this gem"
