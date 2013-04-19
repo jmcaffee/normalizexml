@@ -60,7 +60,9 @@ module NormalizeXml
       remove_id_attributes(doc)
       remove_order_attributes(doc)
       normalize_ppm_datatypes(doc)
-      normalize_derivedparameters(doc)
+      sort_derivedparameters(doc)
+      sort_conditions(doc)
+      update_condition_attributes(doc)
 
       f = File.open(@outfile, 'w')
       doc.write_xml_to(f)
@@ -108,6 +110,34 @@ module NormalizeXml
 
 
     ###
+    # Add Condition attributes
+    # doc:: Nokogiri::XML document
+    #
+    def update_condition_attributes(doc)
+      # Add SystemName attribute to condition elements without a Name element.
+      conddefs = {}
+
+      # Get all conditions.
+      conditions = doc.xpath('//Message[@Type="Condition"]')
+
+      # Make a crossref hash of the IDs and Names.
+      conditions.each do |c|
+        conddefs[c['Id']] = c['Name'] if c.has_attribute?('Name')
+      end
+
+      # Add SystemName attribute if Name is missing (condition references)
+      conditions.each do |c|
+        c['SystemName'] = conddefs[c['Id']] if !c.has_attribute?('Name')
+      end
+
+      # Remove all condition IDs
+      conditions.each do |c|
+        c.remove_attribute('Id')
+      end
+    end
+
+
+    ###
     # Remove Order attributes
     # doc:: Nokogiri::XML document
     #
@@ -148,7 +178,7 @@ module NormalizeXml
 
 
     ###
-    # Normalize all DERIVEDPARAMETERS children by sorting them
+    # Sort all DERIVEDPARAMETERS children by sorting them
     # alphabetically by Name.
     # doc:: Nokogiri::XML document
     #
@@ -159,7 +189,7 @@ module NormalizeXml
     #   4. Add the new node as a sibling to the originial node.
     #   5. Delete (unlink) the original node
     #   6. Rename the new node to the same name as the deleted node.
-    def normalize_derivedparameters(doc)
+    def sort_derivedparameters(doc)
       node = doc.xpath('//DERIVEDPARAMETERS')
 
       sorted = node.children.sort_by do |n1|
@@ -175,6 +205,39 @@ module NormalizeXml
       doc.at('DERIVEDPARAMETERS').add_next_sibling( newnode )
       node.unlink
       newnode.name = 'DERIVEDPARAMETERS'
+    end
+
+
+    ###
+    # Sort all Conditions children by sorting them
+    # alphabetically by Name.
+    # doc:: Nokogiri::XML document
+    #
+    # To get this to work, the following flow was used:
+    #   1. Create a sorted array of all child nodes.
+    #   2. Create a new node and add each node from the array (giving us sorted order).
+    #   3. Delete (unlink) each of the sorted child nodes from the original node.
+    #   4. Add the new node as a sibling to the originial node.
+    #   5. Delete (unlink) the original node
+    #   6. Rename the new node to the same name as the deleted node.
+    def sort_conditions(doc)
+      node = doc.xpath('//Conditions')
+      # Return if this guideline does not contain the conditions element.
+      return if node.empty?
+
+      sorted = node.children.sort_by do |n1|
+        n1['Name']
+      end
+      node.children.each { |n| n.unlink }
+
+      newnode = doc.create_element "SortedConditions"
+      sorted.each do |n|
+        newnode << n;
+      end
+
+      doc.at('Conditions').add_next_sibling( newnode )
+      node.unlink
+      newnode.name = 'Conditions'
     end
 
 
