@@ -47,6 +47,7 @@ module NormalizeXml
 
 
       appDataPath = ENV["APPDATA"]          # APPDATA returns AppData\Roaming on Vista/W7
+      appDataPath ||= ENV["HOME"]          # APPDATA returns AppData\Roaming on Vista/W7
       #appDataPath = ENV["LOCALAPPDATA"]        # LOCALAPPDATA returns AppData\Local on Vista/W7
       appDataPath = File.rubypath(File.join(appDataPath, "normalizexml"))
       @cfg[:appPath] = appDataPath
