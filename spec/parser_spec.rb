@@ -27,7 +27,7 @@ describe NormalizeXml::Parser do
       parser.outfile = outfile.to_s
       parser.normalize()
 
-      outfile.exist?.should be_true
+      expect(outfile.exist?).to eq true
     end
 
 

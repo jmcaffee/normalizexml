@@ -20,7 +20,7 @@ describe NormalizeXMLTask do
 
   it ".normalize_file" do
     NormalizeXMLTask.normalize_file(srcxml, outdir)
-    outfile.exist?.should be_true
+    expect(outfile.exist?).to eq true
   end
 
 
