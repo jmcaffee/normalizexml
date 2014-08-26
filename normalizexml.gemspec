@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
   #spec.add_runtime_dependency "win32ole"
   spec.add_runtime_dependency "nokogiri"
   spec.add_runtime_dependency "ktcommon"
+  spec.add_runtime_dependency "user-choices"
 end
