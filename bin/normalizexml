@@ -1,4 +1,5 @@
-#! C:/tools/Ruby/bin/ruby.exe
+#!/usr/bin/env ruby
+###! C:/tools/Ruby/bin/ruby.exe
 ##############################################################################
 # File:: normalizexml.rb
 # Purpose:: Utility to ...
@@ -112,7 +113,7 @@ end # class NormalizeXmlApp
 		puts
 		puts "Try -h for help."
 		puts
-		exit if !$LOGGING
+		#exit if !$LOGGING
 		puts "Exception type: #{e.class.to_s}"
 		puts e.backtrace
 		puts
