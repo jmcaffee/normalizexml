@@ -191,7 +191,7 @@ module NormalizeXml
     #   6. Rename the new node to the same name as the deleted node.
     def sort_derivedparameters(doc)
       node = doc.xpath('//DERIVEDPARAMETERS')
-
+      
       sorted = node.children.sort_by do |n1|
         n1['Name']
       end
