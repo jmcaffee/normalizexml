@@ -1,25 +1,13 @@
-========================================================================
-= File: 	README.txt
-= Purpose: 	Additions, modifications and notes for NormalizeXml.
-=
-= Generated:	09/03/2010
-= Copyright: 	Copyright (c) 2010, kTech Systems LLC. All rights reserved.
-= Website:   	http://ktechsystems.com
-========================================================================
+# NormalizeXml
 
-BUILDING THE PROJECT:
+NormalizeXml is used to 'normalize' AMS guideline xml so different
+versions can be easily compared.
 
-	Rake is used to build and install the project. By default, rake 
-	will clean, and build docs for NormalizeXml source files.
-	
-	The available tasks are:
-	
-	
-		rake clean         # Remove any temporary products.
-		rake clobber       # Remove any generated file.
-		rake clobber_rdoc  # Remove rdoc products
-		rake rdoc          # Build the rdoc HTML Files
-		rake rerdoc        # Force a rebuild of the RDOC files
-		rake setup:clean   # Remove (uninstall) project from Ruby library
-		rake setup:install # Install project into Ruby library
-		rake setup:test    # Run all tests in test dir
+As part of normalization, all `id`s are zero'd as well as `order`
+attributes.
+
+## LICENSE
+
+See [LICENSE](https://github.com/jmcaffee/normalizexml/blob/master/LICENSE) for
+licensing details.
+
