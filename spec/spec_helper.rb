@@ -5,7 +5,6 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
-  config.treat_symbols_as_metadata_keys_with_true_values = true
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
 
@@ -14,6 +13,19 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = 'random'
+
+  # Enable both 'should' and 'expect' syntax
+  config.expect_with :rspec do |c|
+    # Disable the `expect` sytax...
+    #c.syntax = :should
+
+    # ...or disable the `should` syntax...
+    #c.syntax = :expect
+
+    # ...or explicitly enable both
+    c.syntax = [:should, :expect]
+  end
+
 end
 
 
